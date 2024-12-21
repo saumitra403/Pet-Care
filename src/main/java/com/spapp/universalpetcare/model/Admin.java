@@ -12,7 +12,7 @@ import lombok.Setter;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@PrimaryKeyJoinColumn(name = "admin_id")
+@PrimaryKeyJoinColumn(name = "adm_id")
 public class Admin extends User {
     private long id;
 }

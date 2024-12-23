@@ -1,6 +1,7 @@
 package com.spapp.universalpetcare.controller;
 
 import com.spapp.universalpetcare.model.User;
+import com.spapp.universalpetcare.request.RegistrationRequest;
 import com.spapp.universalpetcare.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
     @PostMapping
-    public void add(@RequestBody User user) {
-        userService.add(user);
+    public User add(@RequestBody RegistrationRequest request) {
+        return userService.add(request);
     }
 }

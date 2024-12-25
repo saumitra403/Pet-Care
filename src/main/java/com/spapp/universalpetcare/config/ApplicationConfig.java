@@ -10,4 +10,9 @@ public class ApplicationConfig {
     public ModelMapper modelMapper() {
         return new ModelMapper();
     };
+
+    @Bean
+    public ConfigService configService() {
+        return ConfigService.getInstance();
+    }
 }

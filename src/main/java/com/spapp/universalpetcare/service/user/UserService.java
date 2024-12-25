@@ -1,5 +1,7 @@
 package com.spapp.universalpetcare.service.user;
 
+import com.spapp.universalpetcare.dto.EntityConverter;
+import com.spapp.universalpetcare.dto.UserDto;
 import com.spapp.universalpetcare.exception.ResourceNotFoundException;
 import com.spapp.universalpetcare.factory.UserFactory;
 import com.spapp.universalpetcare.model.User;
@@ -9,11 +11,15 @@ import com.spapp.universalpetcare.request.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final UserFactory userFactory;
+    private final EntityConverter<User, UserDto> entityConverter;
 
     @Override
     public User register(RegistrationRequest request) {
@@ -31,7 +37,23 @@ public class UserService implements IUserService {
         return userRepository.save(user);
     }
 
+    @Override
     public User findById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
+    public void delete(Long userId) {
+        userRepository.findById(userId).ifPresentOrElse(userRepository::delete, () -> {
+            throw new ResourceNotFoundException("User not found");
+        });
+    }
+
+    @Override
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> entityConverter.mapEntityToDto(user, UserDto.class))
+                .collect(Collectors.toList());
     }
 }

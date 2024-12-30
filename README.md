@@ -23,6 +23,7 @@ Before running the application locally, ensure you have the following installed:
 - Java Development Kit (JDK) 17 or higher
 - Apache Maven
 - MySQL database
+- Redis
 
 ## Running the Application Locally
 

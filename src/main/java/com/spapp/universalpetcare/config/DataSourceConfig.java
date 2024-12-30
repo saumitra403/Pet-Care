@@ -15,9 +15,9 @@ public class DataSourceConfig {
     @Primary
     public DataSource dataSource() {
         return DataSourceBuilder.create()
-                .url(configService.getDbUrl())
-                .username(configService.getDbUsername())
-                .password(configService.getDbPassword())
+                .url(configService.getRequiredEnv("DB_URL"))
+                .username(configService.getRequiredEnv("DB_USERNAME"))
+                .password(configService.getRequiredEnv("DB_PASSWORD"))
                 .build();
     }
 }

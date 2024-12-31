@@ -22,8 +22,8 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String reason;
-    private LocalDate date;
-    private LocalTime time;
+    private LocalDate appointmentDate;
+    private LocalTime appointmentTime;
     private String appointmentNo;
     private LocalDate createdAt;
     @Enumerated(EnumType.STRING)

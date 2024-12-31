@@ -6,7 +6,7 @@ import com.spapp.universalpetcare.model.Appointment;
 import com.spapp.universalpetcare.model.User;
 import com.spapp.universalpetcare.repository.AppointmentRepository;
 import com.spapp.universalpetcare.repository.UserRepository;
-import com.spapp.universalpetcare.request.AppointmentRequest;
+import com.spapp.universalpetcare.request.AppointmentUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -40,8 +41,8 @@ public class AppointmentService implements IAppointmentService {
             if (existingAppointment.isPresent()) {
                 throw new IllegalArgumentException("An appointment already exists for the selected date and time");
             }
-            appointment.setPatient(sender.get());
-            appointment.setVeterinarian(recipient.get());
+            appointment.addPatient(sender.get());
+            appointment.addVeterinarian(recipient.get());
             appointment.setAppointmentNo();
             appointment.setStatus(AppointmentStatus.WAITING_FOR_APPROVAL);
             return appointmentRepository.save(appointment);
@@ -50,7 +51,9 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
-    public CompletableFuture<Appointment> bookAppointmentAsync(Appointment appointment, Long senderId, Long recipientId, LocalDate date, LocalTime time) {
+    public CompletableFuture<Appointment> bookAppointmentAsync(Appointment appointment, Long senderId, Long recipientId) {
+        LocalDate date = appointment.getAppointmentDate();
+        LocalTime time = appointment.getAppointmentTime();
         return CompletableFuture.supplyAsync(() -> {
             RLock lock = redissonClient.getLock("appointment-slot:" + date + ":" + time);
             try {
@@ -79,13 +82,22 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
-    public Appointment updateAppointment(Long id, AppointmentRequest request) {
-        return null;
+    public Appointment updateAppointment(Long id, AppointmentUpdateRequest request) {
+        Appointment existingAppointment = getAppointmentById(id);
+        if(!Objects.equals(existingAppointment.getStatus(), AppointmentStatus.WAITING_FOR_APPROVAL)) {
+            throw new IllegalStateException("Sorry, this appointment can no longer be updated");
+        }
+        existingAppointment.setAppointmentDate(LocalDate.parse(request.getAppointmentDate()));
+        existingAppointment.setAppointmentTime(LocalTime.parse(request.getAppointmentTime()));
+        existingAppointment.setReason(request.getReason());
+        return appointmentRepository.save(existingAppointment);
     }
 
     @Override
     public void deleteAppointment(Long id) {
-        appointmentRepository.findById(id).ifPresent(appointmentRepository::delete);
+        appointmentRepository.findById(id).ifPresentOrElse(appointmentRepository::delete, () -> {
+            throw new ResourceNotFoundException("Appointment not found");
+        });
     }
 
     @Override

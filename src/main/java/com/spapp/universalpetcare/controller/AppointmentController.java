@@ -61,7 +61,7 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/appointment/{appointmentNo}")
+    @GetMapping("/appointment-number/{appointmentNo}")
     public ResponseEntity<ApiResponse> getAppointmentByNo(@PathVariable String appointmentNo) {
         try {
             Appointment appointment = appointmentService.getAppointmentByNo(appointmentNo);

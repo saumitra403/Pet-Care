@@ -1,11 +1,14 @@
 package com.spapp.universalpetcare.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.spapp.universalpetcare.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -17,14 +20,18 @@ import java.util.Random;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"patient","veterinarian"})
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String reason;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate appointmentDate;
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime appointmentTime;
     private String appointmentNo;
+    @CreationTimestamp
     private LocalDate createdAt;
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
@@ -34,7 +41,6 @@ public class Appointment {
     @JoinColumn(name = "recipient")
     @ManyToOne(fetch = FetchType.LAZY)
     private User veterinarian;
-
     public void addPatient(User sender) {
         this.setPatient(sender);
         if (sender.getAppointments() == null) {

@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/appointments")
+@RequestMapping("/api/v1/appointments")
 public class AppointmentController {
     private final AppointmentService appointmentService;
 

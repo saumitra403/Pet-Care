@@ -37,7 +37,7 @@ public class AppointmentService implements IAppointmentService {
         Optional<User> sender = userRepository.findById(senderId);
         Optional<User> recipient = userRepository.findById(recipientId);
         if (sender.isPresent() && recipient.isPresent()) {
-            Optional<Appointment> existingAppointment = appointmentRepository.findByDateAndTime(date, time);
+            Optional<Appointment> existingAppointment = appointmentRepository.findByAppointmentDateAndAppointmentTime(date, time);
             if (existingAppointment.isPresent()) {
                 throw new IllegalArgumentException("An appointment already exists for the selected date and time");
             }

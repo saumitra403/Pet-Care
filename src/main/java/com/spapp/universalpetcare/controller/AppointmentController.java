@@ -6,6 +6,7 @@ import com.spapp.universalpetcare.request.AppointmentUpdateRequest;
 import com.spapp.universalpetcare.response.ApiResponse;
 import com.spapp.universalpetcare.service.appointment.AppointmentService;
 import com.spapp.universalpetcare.utils.FeedBackMessage;
+import com.spapp.universalpetcare.utils.UrlMapping;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,11 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/appointments")
+@RequestMapping(UrlMapping.APPOINTMENTS)
 public class AppointmentController {
     private final AppointmentService appointmentService;
 
-    @GetMapping("/all")
+    @GetMapping(UrlMapping.ALL_APPOINTMENTS)
     public ResponseEntity<ApiResponse> getAllAppointments() {
         try {
             List<Appointment> appointments = appointmentService.getAllAppointments();
@@ -31,7 +32,7 @@ public class AppointmentController {
         }
     }
 
-    @PostMapping("/book-appointment")
+    @PostMapping(UrlMapping.BOOK_APPOINTMENTS)
     public CompletableFuture<ResponseEntity<ApiResponse>> bookAppointment(@RequestBody Appointment appointment, @RequestParam Long senderId, @RequestParam Long recipientId) {
         return appointmentService.bookAppointmentAsync(appointment, senderId, recipientId).handle((savedAppointment, ex) -> {
             if (ex == null) {
@@ -49,7 +50,7 @@ public class AppointmentController {
         });
     }
 
-    @GetMapping("/appointment/{id}")
+    @GetMapping(UrlMapping.GET_APPOINTMENT_BY_ID)
     public ResponseEntity<ApiResponse> getAppointmentById(@PathVariable Long id) {
         try {
             Appointment appointment = appointmentService.getAppointmentById(id);
@@ -61,7 +62,7 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/appointment-number/{appointmentNo}")
+    @GetMapping(UrlMapping.GET_APPOINTMENT_BY_NO)
     public ResponseEntity<ApiResponse> getAppointmentByNo(@PathVariable String appointmentNo) {
         try {
             Appointment appointment = appointmentService.getAppointmentByNo(appointmentNo);
@@ -73,7 +74,7 @@ public class AppointmentController {
         }
     }
 
-    @DeleteMapping("/appointment/{id}")
+    @DeleteMapping(UrlMapping.DELETE_APPOINTMENT)
     public ResponseEntity<ApiResponse> deleteAppointmentById(@PathVariable Long id) {
         try {
             appointmentService.deleteAppointment(id);
@@ -85,7 +86,7 @@ public class AppointmentController {
         }
     }
 
-    @PutMapping("/appointment/{id}")
+    @PutMapping(UrlMapping.UPDATE_APPOINTMENT)
     public ResponseEntity<ApiResponse> updateAppointment(@PathVariable Long id, @RequestBody AppointmentUpdateRequest request) {
         try {
             Appointment appointment = appointmentService.updateAppointment(id, request);

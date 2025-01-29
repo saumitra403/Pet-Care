@@ -8,6 +8,7 @@ import com.spapp.universalpetcare.model.User;
 import com.spapp.universalpetcare.repository.UserRepository;
 import com.spapp.universalpetcare.request.RegistrationRequest;
 import com.spapp.universalpetcare.request.UserUpdateRequest;
+import com.spapp.universalpetcare.utils.FeedBackMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,13 +40,13 @@ public class UserService implements IUserService {
 
     @Override
     public User findById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(FeedBackMessage.NOT_FOUND));
     }
 
     @Override
     public void delete(Long userId) {
         userRepository.findById(userId).ifPresentOrElse(userRepository::delete, () -> {
-            throw new ResourceNotFoundException("User not found");
+            throw new ResourceNotFoundException(FeedBackMessage.NOT_FOUND);
         });
     }
 
